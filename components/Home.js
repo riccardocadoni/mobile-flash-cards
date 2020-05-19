@@ -1,14 +1,16 @@
-import React, { useState, useEffect } from "react";
-import { StyleSheet, Text, View, FlatList, Button } from "react-native";
-import { setDeck, setQuestion, deleteDeck } from "../actions/decks";
+import React from "react";
+import { StyleSheet, View, FlatList, Text } from "react-native";
 import { connect } from "react-redux";
 //components
 import DeckPreview from "./DeckPreview";
 
-const Home = ({ dispatch, store, navigation }) => {
+/**
+ * @description Home Component, displays a list of all the decks the user created
+ */
+
+const Home = ({ store, navigation }) => {
   return (
     <View style={styles.container}>
-      <Text>Home component</Text>
       <FlatList
         data={Object.keys(store)}
         renderItem={({ item }) => (
@@ -19,6 +21,7 @@ const Home = ({ dispatch, store, navigation }) => {
           ></DeckPreview>
         )}
         keyExtractor={(item) => item}
+        ListEmptyComponent={EmptyDecks}
       />
     </View>
   );
@@ -30,38 +33,20 @@ const mapStateToProps = (store = {}) => {
 
 export default connect(mapStateToProps)(Home);
 
+const EmptyDecks = () => {
+  return (
+    <View style={styles.container}>
+      <Text>Start adding some Decks!</Text>
+    </View>
+  );
+};
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "center",
+    padding: 30,
   },
 });
-
-/* //exaple decks
- const deck1 = {
-    deck1: {
-      id: "deck1",
-      title: "title1",
-      questions: [
-        {
-          question: "question",
-          answer: "answer",
-        },
-      ],
-    },
-  };
-  const deck2 = {
-    deck2: {
-      id: "deck2",
-      title: "title2",
-      questions: [
-        {
-          question: "question2",
-          answer: "answer2",
-        },
-      ],
-    },
-  };
-  const question = { hi: "hi" }; */

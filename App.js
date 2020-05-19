@@ -1,6 +1,6 @@
 import "react-native-gesture-handler";
 import React, { useEffect } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet } from "react-native";
 import { createStore } from "redux";
 import { Provider } from "react-redux";
 import decks from "./reducers/decks";
@@ -8,46 +8,69 @@ import middleware from "./middlewares";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { AsyncStorage } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 //components
 import Home from "./components/Home";
 import AddDeck from "./components/AddDeck";
 import Deck from "./components/Deck";
 import AddCard from "./components/AddCard";
-//actions
-import { setDecks } from "./actions/decks";
-import { set } from "react-native-reanimated";
+import Quiz from "./components/Quiz";
+//helpers
+import { setLocalNotification } from "./helpers";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
+/**
+ * @description Main Component
+ */
+
 export default function App() {
   const store = createStore(decks, middleware);
-  const STORAGE_KEY = "yourKey";
 
   useEffect(() => {
-    store.subscribe(() =>
-      AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(store.getState()))
-    );
+    setLocalNotification();
   }, []);
 
-  useEffect(() => {
-    // checking the async storage for previous stored data
-    AsyncStorage.getItem(STORAGE_KEY)
-      .then(JSON.parse)
-      .then((data) => {
-        store.dispatch(setDecks(data));
-      });
-  }, []);
+  function getHeaderTitle(route) {
+    // Access the tab navigator's state using `route.state`
+    const routeName = route.state
+      ? // Get the currently active route name in the tab navigator
+        route.state.routes[route.state.index].name
+      : // If state doesn't exist, we need to default to `screen` param if available, or the initial screen
+        // In our case, it's "Home" as that's the first screen inside the navigator
+        route.params?.screen || "Home";
+
+    switch (routeName) {
+      case "Home":
+        return "Home";
+      case "AddDeck":
+        return "Add new deck";
+    }
+  }
 
   return (
     <Provider store={store}>
       <NavigationContainer>
         <Stack.Navigator>
-          <Stack.Screen name={"NestedNav"} component={NestedNav}></Stack.Screen>
-          <Stack.Screen name={"Profile"} component={Profile}></Stack.Screen>
+          <Stack.Screen
+            name={"NestedNav"}
+            component={NestedNav}
+            options={({ route }) => ({
+              headerTitle: getHeaderTitle(route),
+            })}
+          ></Stack.Screen>
           <Stack.Screen name={"Deck"} component={Deck}></Stack.Screen>
-          <Stack.Screen name={"AddCard"} component={AddCard}></Stack.Screen>
+          <Stack.Screen
+            name={"AddCard"}
+            component={AddCard}
+            options={{ title: "Add new card" }}
+          ></Stack.Screen>
+          <Stack.Screen
+            name={"Quiz"}
+            component={Quiz}
+            options={{ title: "Quiz" }}
+          ></Stack.Screen>
         </Stack.Navigator>
       </NavigationContainer>
     </Provider>
@@ -56,18 +79,29 @@ export default function App() {
 
 const NestedNav = () => {
   return (
-    <Tab.Navigator>
-      <Tab.Screen name="Home" component={Home}></Tab.Screen>
-      <Tab.Screen name="Add Deck" component={AddDeck}></Tab.Screen>
-    </Tab.Navigator>
-  );
-};
+    <Tab.Navigator
+      screenOptions={({ route }) => ({
+        tabBarIcon: ({ color, size }) => {
+          let iconName;
 
-const Profile = () => {
-  return (
-    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-      <Text>Settings!</Text>
-    </View>
+          if (route.name === "Home") {
+            iconName = "ios-home";
+          } else if (route.name === "AddDeck") {
+            iconName = "ios-add-circle";
+          }
+
+          // You can return any component that you like here!
+          return <Ionicons name={iconName} size={size} color={color} />;
+        },
+      })}
+      tabBarOptions={{
+        activeTintColor: "tomato",
+        inactiveTintColor: "gray",
+      }}
+    >
+      <Tab.Screen name="Home" component={Home}></Tab.Screen>
+      <Tab.Screen name="AddDeck" component={AddDeck}></Tab.Screen>
+    </Tab.Navigator>
   );
 };
 
