@@ -1,6 +1,5 @@
 import "react-native-gesture-handler";
 import React, { useEffect } from "react";
-import { StyleSheet } from "react-native";
 import { createStore } from "redux";
 import { Provider } from "react-redux";
 import decks from "./reducers/decks";
@@ -83,14 +82,11 @@ const NestedNav = () => {
       screenOptions={({ route }) => ({
         tabBarIcon: ({ color, size }) => {
           let iconName;
-
           if (route.name === "Home") {
             iconName = "ios-home";
           } else if (route.name === "AddDeck") {
             iconName = "ios-add-circle";
           }
-
-          // You can return any component that you like here!
           return <Ionicons name={iconName} size={size} color={color} />;
         },
       })}
@@ -104,12 +100,3 @@ const NestedNav = () => {
     </Tab.Navigator>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-});
