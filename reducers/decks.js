@@ -1,7 +1,18 @@
-import { SET_NEW_DECK, SET_NEW_QUESTION, DELETE_DECK } from "../actions/decks";
+import {
+  SET_NEW_DECK,
+  SET_NEW_QUESTION,
+  DELETE_DECK,
+  SET_DECKS,
+} from "../actions/decks";
 
 const decks = (store = {}, action) => {
   switch (action.type) {
+    case SET_DECKS:
+      return {
+        ...store,
+        ...action.decks,
+      };
+
     case SET_NEW_DECK:
       return {
         ...store,

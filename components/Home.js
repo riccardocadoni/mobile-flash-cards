@@ -1,11 +1,46 @@
-import React, { useEffect } from "react";
-import { Text } from "react-native";
+import React, { useState, useEffect } from "react";
+import { StyleSheet, Text, View, FlatList, Button } from "react-native";
 import { setDeck, setQuestion, deleteDeck } from "../actions/decks";
 import { connect } from "react-redux";
+//components
+import DeckPreview from "./DeckPreview";
 
-const Home = ({ dispatch }) => {
-  //exaple decks
-  const deck1 = {
+const Home = ({ dispatch, store, navigation }) => {
+  return (
+    <View style={styles.container}>
+      <Text>Home component</Text>
+      <FlatList
+        data={Object.keys(store)}
+        renderItem={({ item }) => (
+          <DeckPreview
+            title={item}
+            cardsNumber={store[item].questions.length}
+            navigation={navigation}
+          ></DeckPreview>
+        )}
+        keyExtractor={(item) => item}
+      />
+    </View>
+  );
+};
+
+const mapStateToProps = (store = {}) => {
+  return { store };
+};
+
+export default connect(mapStateToProps)(Home);
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#fff",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+});
+
+/* //exaple decks
+ const deck1 = {
     deck1: {
       id: "deck1",
       title: "title1",
@@ -29,13 +64,4 @@ const Home = ({ dispatch }) => {
       ],
     },
   };
-  const question = { hi: "hi" };
-
-  useEffect(() => {
-    //dispatch
-  }, []);
-
-  return <Text>Home component</Text>;
-};
-
-export default connect()(Home);
+  const question = { hi: "hi" }; */
