@@ -3,6 +3,7 @@ import {
   SET_NEW_QUESTION,
   DELETE_DECK,
   SET_DECKS,
+  INITIAL_DATA,
 } from "../actions/decks";
 
 const decks = (store = {}, action) => {
@@ -34,6 +35,11 @@ const decks = (store = {}, action) => {
       const { [action.deckId]: deckId, ...newStore } = store;
       return {
         ...newStore,
+      };
+    case INITIAL_DATA:
+      return {
+        ...store,
+        ...action.data,
       };
 
     default:

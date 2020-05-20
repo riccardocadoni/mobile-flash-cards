@@ -32,7 +32,6 @@ const Deck = ({ dispatch, route, store, navigation }) => {
           onPress={() => {
             navigation.navigate("Quiz", { deckId: id });
           }}
-          disabled={deck.questions.length === 0}
         >
           <Text>QUIZ</Text>
         </TouchableOpacity>

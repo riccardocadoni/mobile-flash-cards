@@ -33,7 +33,7 @@ const AddDeck = ({ dispatch, navigation }) => {
     const deck = formatDeck(title);
     dispatch(setDeck(deck));
     setTitle("");
-    navigation.navigate("Home");
+    navigation.navigate("Deck", { id: title });
   };
 
   return (

@@ -18,11 +18,27 @@ const Quiz = ({ route, store, navigation }) => {
 
   useEffect(() => {
     if (quizState === deck.questions.length) setQuizOver(true);
+    clearLocalNotifications().then(setLocalNotification);
   }, [quizState]);
 
-  useEffect(() => {
-    clearLocalNotifications().then(setLocalNotification);
-  }, []);
+  if (deck.questions.length === 0) {
+    return (
+      <View style={styles.container}>
+        <View style={styles.endQuizContainer}>
+          <Text style={styles.titleText}>There are no cards in this deck!</Text>
+          <Text>Add some question before starting a Quiz</Text>
+          <TouchableOpacity
+            style={[styles.restartQuizButton, { marginTop: 50 }]}
+            onPress={() => {
+              navigation.goBack();
+            }}
+          >
+            <Text>Go Back</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    );
+  }
 
   if (quizOver)
     return (
@@ -37,6 +53,8 @@ const Quiz = ({ route, store, navigation }) => {
             style={styles.restartQuizButton}
             onPress={() => {
               setQuizState(0);
+              setNumCorrectAnsw(0);
+              setShowAnswer(false);
               setQuizOver(false);
             }}
           >
@@ -84,6 +102,7 @@ const Quiz = ({ route, store, navigation }) => {
             onPress={() => {
               setNumCorrectAnsw((oldValue) => oldValue + 1);
               setQuizState((oldValue) => oldValue + 1);
+              setShowAnswer(false);
             }}
           >
             <Text>CORRECT</Text>
@@ -92,6 +111,7 @@ const Quiz = ({ route, store, navigation }) => {
             style={styles.incorrectButton}
             onPress={() => {
               setQuizState((oldValue) => oldValue + 1);
+              setShowAnswer(false);
             }}
           >
             <Text>INCORRECT</Text>

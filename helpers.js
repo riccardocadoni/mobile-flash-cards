@@ -23,7 +23,7 @@ export const setLocalNotification = () => {
       if (data === null) {
         Permissions.askAsync(Permissions.NOTIFICATIONS).then(({ status }) => {
           if (status === "granted") {
-            Notifications.cancelAllScheduledNotificationAsync();
+            Notifications.cancelAllScheduledNotificationsAsync();
 
             const time = new Date();
             time.setDate(time.getDate() + 1);

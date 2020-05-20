@@ -8,6 +8,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Ionicons } from "@expo/vector-icons";
+import { AsyncStorage } from "react-native";
 //components
 import Home from "./components/Home";
 import AddDeck from "./components/AddDeck";
@@ -16,6 +17,8 @@ import AddCard from "./components/AddCard";
 import Quiz from "./components/Quiz";
 //helpers
 import { setLocalNotification } from "./helpers";
+//actions
+import { handleInitialData } from "./actions/decks";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -26,6 +29,21 @@ const Tab = createBottomTabNavigator();
 
 export default function App() {
   const store = createStore(decks, middleware);
+  const STORAGE_KEY = "storageKey";
+  // checking the async storage for previous stored data
+  useEffect(() => {
+    store.subscribe(() =>
+      AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(store.getState()))
+    );
+  }, []);
+
+  useEffect(() => {
+    AsyncStorage.getItem(STORAGE_KEY)
+      .then(JSON.parse)
+      .then((data) => {
+        store.dispatch(handleInitialData(data));
+      });
+  }, []);
 
   useEffect(() => {
     setLocalNotification();
